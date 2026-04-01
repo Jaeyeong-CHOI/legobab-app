@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LegoBab IA (Information Architecture)</title>
+<link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { 
+  font-family:'Jua',sans-serif; 
+  background:#FFFCF0; 
+  padding:40px 20px;
+}
+.title { text-align:center; font-size:28px; color:#3A3A3A; margin-bottom:8px; }
+.subtitle { text-align:center; font-size:14px; color:#888; margin-bottom:40px; }
+
+/* Tree structure */
+.ia-tree { display:flex; flex-direction:column; align-items:center; gap:0; }
+
+/* Levels */
+.level { display:flex; justify-content:center; gap:12px; position:relative; flex-wrap:wrap; }
+.level-0 { margin-bottom:20px; }
+.level-1 { margin-bottom:16px; }
+.level-2 { margin-bottom:0; }
+
+/* Connectors */
+.connector-v { width:2px; height:20px; background:#E0D8D0; margin:0 auto; }
+.connector-h-wrap { display:flex; justify-content:center; margin-bottom:0; position:relative; }
+
+/* Nodes */
+.node {
+  border-radius:14px; padding:10px 12px; text-align:center;
+  min-width:90px; position:relative;
+  box-shadow:0 2px 8px rgba(0,0,0,0.06);
+  border:2px solid;
+}
+.node-root {
+  background:linear-gradient(135deg,#FFB6C1,#FF9682);
+  color:#fff; font-size:20px; border-color:#E8907A;
+  padding:16px 32px; min-width:180px;
+}
+.node-l1 {
+  font-size:14px; min-width:120px; color:#fff;
+  padding:10px 14px;
+}
+.node-l2 {
+  font-size:11px; min-width:95px; padding:8px 10px;
+  background:#fff; color:#3A3A3A;
+}
+.node-label { font-size:inherit; font-weight:normal; }
+.node-icon { font-size:16px; display:block; margin-bottom:2px; }
+.node-l1 .node-icon { font-size:18px; }
+.node-root .node-icon { font-size:24px; }
+
+/* Colors for L1 */
+.c-home { background:#FFB6C1; border-color:#E89CA8; }
+.c-sim { background:#98E0C8; border-color:#70C8A8; }
+.c-menu { background:#C8A878; border-color:#B09060; }
+.c-rush { background:#FF9682; border-color:#E07868; }
+.c-group { background:#AAD2FF; border-color:#88B8E8; }
+.c-my { background:#B4A0E6; border-color:#9880C8; }
+.c-complete { background:#78C88C; border-color:#60B070; }
+.c-return { background:#78C88C; border-color:#60B070; }
+
+/* L2 border colors */
+.b-home { border-color:#FFB6C1; }
+.b-sim { border-color:#98E0C8; }
+.b-menu { border-color:#C8A878; }
+.b-rush { border-color:#FF9682; }
+.b-group { border-color:#AAD2FF; }
+.b-my { border-color:#B4A0E6; }
+.b-complete { border-color:#78C88C; }
+
+/* Group wrapper */
+.branch { display:flex; flex-direction:column; align-items:center; }
+.children { display:flex; gap:4px; margin-top:6px; flex-wrap:wrap; justify-content:center; }
+.branch-line { width:2px; height:12px; margin:0 auto; }
+
+/* Flow arrows at bottom */
+.flow-section { 
+  margin-top:40px; text-align:center; 
+  background:#fff; border-radius:16px; 
+  padding:20px; border:2px solid #E8E0D8;
+  max-width:1100px; margin-left:auto; margin-right:auto;
+}
+.flow-title { font-size:16px; color:#3A3A3A; margin-bottom:12px; }
+.flow-row { display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap; }
+.flow-node {
+  padding:8px 14px; border-radius:10px; font-size:12px;
+  color:#fff; display:inline-block;
+}
+.flow-arrow { font-size:16px; color:#C8C0B8; }
+
+/* Legend */
+.legend {
+  margin-top:24px; display:flex; justify-content:center; gap:20px; flex-wrap:wrap;
+}
+.legend-item { display:flex; align-items:center; gap:6px; font-size:11px; color:#888; }
+.legend-dot { width:12px; height:12px; border-radius:4px; }
+</style>
+</head>
+<body>
+
+<div class="title">🧱 레고밥 LegoBab — Information Architecture</div>
+<div class="subtitle">앱 구조 & 화면 계층 · UX Design 2026 Spring · DGIST</div>
+
+<div class="ia-tree">
+
+  <!-- Level 0: Root -->
+  <div class="level level-0">
+    <div class="node node-root">
+      <span class="node-icon">🧱</span>
+      <span class="node-label">레고밥 LegoBab</span>
+    </div>
+  </div>
+
+  <div class="connector-v" style="background:#E89CA8;"></div>
+
+  <!-- Level 1: Main tabs + flows -->
+  <div class="level level-1">
+
+    <!-- Home -->
+    <div class="branch">
+      <div class="node node-l1 c-home"><span class="node-icon">🏠</span><span class="node-label">홈 Home</span></div>
+      <div class="branch-line" style="background:#FFB6C1;"></div>
+      <div class="children">
+        <div class="node node-l2 b-home"><span class="node-icon">🔥</span>AI 추천</div>
+        <div class="node node-l2 b-home"><span class="node-icon">⚡</span>빠른 재주문</div>
+        <div class="node node-l2 b-home"><span class="node-icon">📊</span>주간 영양</div>
+        <div class="node node-l2 b-home"><span class="node-icon">🎰</span>러시 배너</div>
+        <div class="node node-l2 b-home"><span class="node-icon">👥</span>같이밥 배너</div>
+      </div>
+    </div>
+
+    <!-- Simulator -->
+    <div class="branch">
+      <div class="node node-l1 c-sim"><span class="node-icon">🧱</span><span class="node-label">조합 Build</span></div>
+      <div class="branch-line" style="background:#98E0C8;"></div>
+      <div class="children">
+        <div class="node node-l2 b-sim"><span class="node-icon">🍚</span>베이스 선택</div>
+        <div class="node node-l2 b-sim"><span class="node-icon">🔴</span>블록 선택</div>
+        <div class="node node-l2 b-sim"><span class="node-icon">📊</span>영양 분석</div>
+        <div class="node node-l2 b-sim"><span class="node-icon">✅</span>균형 점수</div>
+        <div class="node node-l2 b-sim"><span class="node-icon">🛡️</span>식이 필터</div>
+      </div>
+    </div>
+
+    <!-- Rush -->
+    <div class="branch">
+      <div class="node node-l1 c-rush"><span class="node-icon">🎮</span><span class="node-label">러시 Rush</span></div>
+      <div class="branch-line" style="background:#FF9682;"></div>
+      <div class="children">
+        <div class="node node-l2 b-rush"><span class="node-icon">🎰</span>룰렛</div>
+        <div class="node node-l2 b-rush"><span class="node-icon">⏰</span>타이머</div>
+        <div class="node node-l2 b-rush"><span class="node-icon">🔥</span>잔여 블록</div>
+      </div>
+    </div>
+
+    <!-- Group -->
+    <div class="branch">
+      <div class="node node-l1 c-group"><span class="node-icon">👥</span><span class="node-label">같이밥 Together</span></div>
+      <div class="branch-line" style="background:#AAD2FF;"></div>
+      <div class="children">
+        <div class="node node-l2 b-group"><span class="node-icon">🔗</span>그룹 생성</div>
+        <div class="node node-l2 b-group"><span class="node-icon">👥</span>참여 현황</div>
+        <div class="node node-l2 b-group"><span class="node-icon">💰</span>할인 티어</div>
+        <div class="node node-l2 b-group"><span class="node-icon">💬</span>채팅</div>
+      </div>
+    </div>
+
+    <!-- MY -->
+    <div class="branch">
+      <div class="node node-l1 c-my"><span class="node-icon">👤</span><span class="node-label">MY</span></div>
+      <div class="branch-line" style="background:#B4A0E6;"></div>
+      <div class="children">
+        <div class="node node-l2 b-my"><span class="node-icon">👤</span>프로필</div>
+        <div class="node node-l2 b-my"><span class="node-icon">📅</span>주간 트래커</div>
+        <div class="node node-l2 b-my"><span class="node-icon">♻️</span>그린포인트</div>
+        <div class="node node-l2 b-my"><span class="node-icon">🌐</span>언어 설정</div>
+        <div class="node node-l2 b-my"><span class="node-icon">🛡️</span>식이 필터</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Level 2: Post-order flows -->
+  <div style="margin-top:20px;">
+    <div class="level level-1">
+      <div class="branch">
+        <div class="node node-l1 c-menu"><span class="node-icon">📋</span><span class="node-label">메뉴 Menu</span></div>
+        <div class="branch-line" style="background:#C8A878;"></div>
+        <div class="children">
+          <div class="node node-l2 b-menu"><span class="node-icon">🔴</span>단백질</div>
+          <div class="node node-l2 b-menu"><span class="node-icon">🟢</span>채소</div>
+          <div class="node node-l2 b-menu"><span class="node-icon">🟡</span>탄수화물</div>
+          <div class="node node-l2 b-menu"><span class="node-icon">🟣</span>디저트</div>
+          <div class="node node-l2 b-menu"><span class="node-icon">🛡️</span>필터</div>
+        </div>
+      </div>
+
+      <div class="branch">
+        <div class="node node-l1 c-complete"><span class="node-icon">✅</span><span class="node-label">주문 완료</span></div>
+        <div class="branch-line" style="background:#78C88C;"></div>
+        <div class="children">
+          <div class="node node-l2 b-complete"><span class="node-icon">📍</span>픽업 정보</div>
+          <div class="node node-l2 b-complete"><span class="node-icon">♻️</span>에코 스탯</div>
+          <div class="node node-l2 b-complete"><span class="node-icon">📊</span>영양 리포트</div>
+        </div>
+      </div>
+
+      <div class="branch">
+        <div class="node node-l1 c-return"><span class="node-icon">🧱</span><span class="node-label">수거 완료</span></div>
+        <div class="branch-line" style="background:#78C88C;"></div>
+        <div class="children">
+          <div class="node node-l2 b-complete"><span class="node-icon">🔔</span>푸시 알림</div>
+          <div class="node node-l2 b-complete"><span class="node-icon">💚</span>포인트 적립</div>
+          <div class="node node-l2 b-complete"><span class="node-icon">🌳</span>나무 레벨업</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- UX Flow -->
+<div class="flow-section">
+  <div class="flow-title">🔄 핵심 UX 플로우 (User Journey)</div>
+  <div class="flow-row">
+    <div class="flow-node c-home">🏠 홈</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-node c-sim">🧱 조합</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-node" style="background:#FFD250;color:#3A3A3A;">💰 결제</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-node c-complete">✅ 주문 완료</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-node" style="background:#3A3A3A;">📦 로커 픽업</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-node" style="background:#3A3A3A;">🍱 식사</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-node c-return">🧱 수거 반납</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-node c-my">♻️ 포인트 적립</div>
+  </div>
+  <div class="flow-row" style="margin-top:12px;">
+    <div class="flow-node c-rush">🎮 러시</div>
+    <span class="flow-arrow" style="font-size:12px;">저녁 잔여 →</span>
+    <div class="flow-node c-sim">🧱 조합</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-node c-complete">✅ 완료</div>
+    <span style="margin:0 20px;color:#C8C0B8;">|</span>
+    <div class="flow-node c-group">👥 같이밥</div>
+    <span class="flow-arrow" style="font-size:12px;">그룹 참여 →</span>
+    <div class="flow-node c-sim">🧱 조합</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-node c-complete">✅ 완료</div>
+  </div>
+</div>
+
+<!-- Legend -->
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#FFB6C1;"></div>홈</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#98E0C8;"></div>조합</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#C8A878;"></div>메뉴</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#FF9682;"></div>러시</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#AAD2FF;"></div>같이밥</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#B4A0E6;"></div>MY</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#78C88C;"></div>주문/수거</div>
+</div>
+
+</body>
+</html>
