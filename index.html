@@ -50,13 +50,21 @@ body {
 
 /* Header */
 .header {
-  position: sticky; top:0; z-index:100;
+  position: fixed; top:0; left:0; right:0; z-index:200;
   background: linear-gradient(135deg, var(--pink), var(--coral));
-  padding: 16px 20px 12px;
+  padding: 14px 20px;
   display: flex; align-items: center; justify-content: space-between;
+  max-width: 375px; margin: 0 auto;
+}
+@media (min-width:431px) {
+  .header { left:50%; transform:translateX(-50%); }
 }
 .header-title { font-size:22px; color:#fff; text-shadow: 1px 1px 2px rgba(0,0,0,0.15); }
+.header-right { display:flex; align-items:center; gap:8px; }
 .header-mascot { width:36px; height:36px; border-radius:50%; object-fit:cover; border:2px solid #fff; }
+.header-lang { width:32px; height:32px; border-radius:50%; background:rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center; font-size:16px; cursor:pointer; border:none; }
+.header-lang:active { background:rgba(255,255,255,0.4); }
+.header-spacer { height:56px; }
 
 /* Screen container */
 .screen { display:none; padding:16px 16px 90px; animation: fadeIn 0.25s ease; }
@@ -353,13 +361,17 @@ body {
 
 <div id="phone-frame">
   <!-- Floating language button -->
-  <div class="lang-fab" onclick="cycleLang()" id="lang-fab" title="Language">🌐</div>
+  <!-- lang button moved to header -->
 
   <!-- Header -->
   <div class="header">
     <div class="header-title">🧱 레고밥</div>
-    <img class="header-mascot" src="images/mascot.png" alt="mascot" onerror="this.style.display='none'">
+    <div class="header-right">
+      <button class="header-lang" onclick="cycleLang()" title="Language">🌐</button>
+      <img class="header-mascot" src="images/mascot.png" alt="mascot" onerror="this.style.display='none'">
+    </div>
   </div>
+  <div class="header-spacer"></div>
 
   <!-- ==================== HOME ==================== -->
   <div class="screen active" id="screen-home">
