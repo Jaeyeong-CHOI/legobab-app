@@ -301,6 +301,50 @@ body {
 .eco-badge .eco-num { font-size:18px; color:var(--green); }
 .eco-badge .eco-label { font-size:10px; color:var(--gray); }
 
+/* Floating language button */
+.lang-fab {
+  position:fixed; top:60px; right:12px; z-index:150;
+  width:40px; height:40px; border-radius:50%;
+  background:#fff; border:2px solid var(--coral);
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.12);
+  transition:transform 0.2s;
+}
+@media (min-width:431px) {
+  .lang-fab { right:calc(50% - 375px/2 + 12px); }
+}
+.lang-fab:active { transform:scale(0.9); }
+
+/* Base grid */
+.base-grid {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(100px,1fr));
+  gap:8px;
+}
+.base-card {
+  padding:10px 6px; border-radius:12px; border:2px solid var(--light-gray);
+  text-align:center; cursor:pointer; transition:all 0.2s; background:#fff;
+  font-family:'Jua',sans-serif; font-size:13px;
+}
+.base-card.active { border-color:var(--coral); background:#FFF5F3; }
+.base-card:active { transform:scale(0.95); }
+.base-card-emoji { font-size:24px; }
+.base-card-cal { font-size:10px; color:var(--gray); }
+
+/* Block tags */
+.block-tags { display:flex; gap:3px; margin-top:2px; flex-wrap:wrap; }
+.btag { font-size:10px; padding:1px 6px; border-radius:8px; }
+.btag-halal { background:#E8F8EE; color:#2E7D32; }
+.btag-vegan { background:#F3E5F5; color:#7B1FA2; }
+
+/* Language radio in settings */
+.lang-options { display:flex; gap:10px; padding:8px 0; }
+.lang-radio {
+  flex:1; text-align:center; padding:10px 6px; border-radius:12px;
+  border:2px solid var(--light-gray); cursor:pointer; transition:all 0.2s;
+  font-size:13px; background:#fff;
+}
+.lang-radio.active { border-color:var(--coral); background:#FFF5F3; }
+
 /* Scrollbar */
 ::-webkit-scrollbar { width:4px; }
 ::-webkit-scrollbar-thumb { background:var(--pink); border-radius:2px; }
@@ -309,6 +353,9 @@ body {
 <body>
 
 <div id="phone-frame">
+  <!-- Floating language button -->
+  <div class="lang-fab" onclick="cycleLang()" id="lang-fab" title="Language">🌐</div>
+
   <!-- Header -->
   <div class="header">
     <div class="header-title">🧱 레고밥</div>
@@ -319,7 +366,7 @@ body {
   <div class="screen active" id="screen-home">
     <!-- AI 추천 -->
     <div class="card">
-      <div class="card-title">🤖 AI 오늘의 추천</div>
+      <div class="card-title" data-i18n="aiRecommend">🤖 AI 오늘의 추천</div>
       <div style="display:flex;gap:10px;align-items:center;">
         <img src="images/bulgogi.png" style="width:70px;height:70px;border-radius:12px;object-fit:cover;" onerror="this.outerHTML='<div style=\'width:70px;height:70px;border-radius:12px;background:var(--pink);display:flex;align-items:center;justify-content:center;font-size:28px\'>🥩</div>'">
         <div>
@@ -335,7 +382,7 @@ body {
 
     <!-- 빠른 재주문 -->
     <div class="card">
-      <div class="card-title">⚡ 빠른 재주문</div>
+      <div class="card-title" data-i18n="quickReorder">⚡ 빠른 재주문</div>
       <div id="quick-reorder">
         <div style="color:var(--gray);font-size:13px;text-align:center;padding:10px;">아직 주문 기록이 없어요!</div>
       </div>
@@ -343,7 +390,7 @@ body {
 
     <!-- 주간 영양 -->
     <div class="card">
-      <div class="card-title">📊 이번 주 영양 밸런스</div>
+      <div class="card-title" data-i18n="weeklyBalance">📊 이번 주 영양 밸런스</div>
       <div class="week-chart" id="week-chart"></div>
       <div style="font-size:12px;color:var(--gray);text-align:center;">월~금 균형 점수 추이</div>
     </div>
@@ -352,8 +399,8 @@ body {
     <div class="banner banner-rush" onclick="navigate('rush')">
       <div class="banner-icon">🎰</div>
       <div>
-        <div class="banner-title">레고 러시 진행중!</div>
-        <div class="banner-text">지금 돌리면 최대 50% 할인 🔥</div>
+        <div class="banner-title" data-i18n="rushBannerTitle">레고 러시 진행중!</div>
+        <div class="banner-text" data-i18n="rushBannerText">지금 돌리면 최대 50% 할인 🔥</div>
       </div>
     </div>
 
@@ -361,8 +408,8 @@ body {
     <div class="banner banner-group" onclick="navigate('group')">
       <div class="banner-icon">👥</div>
       <div>
-        <div class="banner-title">같이밥 모집중</div>
-        <div class="banner-text">3명 더 모이면 20% 할인!</div>
+        <div class="banner-title" data-i18n="groupBannerTitle">같이밥 모집중</div>
+        <div class="banner-text" data-i18n="groupBannerText">3명 더 모이면 20% 할인!</div>
       </div>
     </div>
   </div>
@@ -370,16 +417,12 @@ body {
   <!-- ==================== SIMULATOR ==================== -->
   <div class="screen" id="screen-simulator">
     <div class="card">
-      <div class="card-title">🍚 베이스 선택</div>
-      <div class="cat-filters">
-        <button class="cat-btn active" onclick="selectBase(this,'rice')">🍚 흰쌀밥</button>
-        <button class="cat-btn" onclick="selectBase(this,'brown')">🍚 현미밥</button>
-        <button class="cat-btn" onclick="selectBase(this,'noodle')">🍜 곤약면</button>
-      </div>
+      <div class="card-title" data-i18n="baseSelect">🍚 베이스 선택</div>
+      <div class="base-grid" id="base-grid"></div>
     </div>
 
     <div class="card">
-      <div class="card-title">🧱 블록 선택 <span style="font-size:12px;color:var(--gray);">(최대 4개)</span></div>
+      <div class="card-title"><span data-i18n="blockSelect">🧱 블록 선택</span> <span style="font-size:12px;color:var(--gray);" data-i18n="maxBlocks">(최대 4개)</span></div>
       <div class="cat-filters" id="block-category-filters">
         <button class="cat-btn active" data-cat="all" onclick="filterBlocks('all',this)">전체</button>
         <button class="cat-btn" data-cat="protein" onclick="filterBlocks('protein',this)">🔴 단백질</button>
@@ -391,7 +434,7 @@ body {
     </div>
 
     <div class="card">
-      <div class="card-title">📊 실시간 영양 분석</div>
+      <div class="card-title" data-i18n="liveNutrition">📊 실시간 영양 분석</div>
       <div id="nutrition-bars"></div>
       <div style="text-align:center;margin-top:10px;">
         <div style="font-size:13px;color:var(--gray);">균형 점수</div>
@@ -400,13 +443,13 @@ body {
     </div>
 
     <button class="btn btn-coral btn-full" id="order-btn" onclick="placeOrder()">
-      🧱 주문하기 · <span id="total-price">0</span>원
+      🧱 <span data-i18n="orderBtn">주문하기</span> · <span id="total-price">0</span><span data-i18n="won">원</span>
     </button>
   </div>
 
   <!-- ==================== MENU LINEUP ==================== -->
   <div class="screen" id="screen-menu">
-    <div class="card-title" style="font-size:18px;margin-bottom:12px;">📋 메뉴 라인업</div>
+    <div class="card-title" style="font-size:18px;margin-bottom:12px;" data-i18n="menuLineup">📋 메뉴 라인업</div>
     <div class="cat-filters" id="menu-cat-filters">
       <button class="cat-btn active" data-cat="all" onclick="filterMenu('all',this)">전체</button>
       <button class="cat-btn" data-cat="protein" onclick="filterMenu('protein',this)">🔴 단백질</button>
@@ -420,7 +463,7 @@ body {
   <!-- ==================== RUSH ==================== -->
   <div class="screen" id="screen-rush">
     <div class="card" style="text-align:center;">
-      <div class="card-title" style="justify-content:center;">🎰 레고 러시</div>
+      <div class="card-title" style="justify-content:center;" data-i18n="rushTitle">🎰 레고 러시</div>
       <div style="font-size:13px;color:var(--gray);margin-bottom:4px;">남은 시간</div>
       <div class="countdown" id="rush-countdown">05:00</div>
     </div>
@@ -442,7 +485,7 @@ body {
     </div>
 
     <div class="card">
-      <div class="card-title">🧱 할인 블록 현황</div>
+      <div class="card-title" data-i18n="rushBlocks">🧱 할인 블록 현황</div>
       <div id="rush-blocks"></div>
     </div>
   </div>
@@ -450,25 +493,25 @@ body {
   <!-- ==================== GROUP ORDER ==================== -->
   <div class="screen" id="screen-group">
     <div class="card">
-      <div class="card-title">👥 같이밥 만들기</div>
-      <div style="font-size:13px;color:var(--gray);margin-bottom:10px;">친구들과 함께 주문하면 할인!</div>
+      <div class="card-title" data-i18n="groupCreate">👥 같이밥 만들기</div>
+      <div style="font-size:13px;color:var(--gray);margin-bottom:10px;" data-i18n="groupDesc">친구들과 함께 주문하면 할인!</div>
       <div style="display:flex;gap:8px;">
         <button class="btn btn-mint btn-sm" onclick="createGroup()">+ 그룹 만들기</button>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-title">📊 할인 티어</div>
+      <div class="card-title" data-i18n="discountTier">📊 할인 티어</div>
       <div style="font-size:13px;">
-        <div style="padding:6px 0;">👤×3 → <span style="color:var(--coral);">10% 할인</span></div>
-        <div style="padding:6px 0;">👤×5 → <span style="color:var(--coral);">15% 할인</span></div>
-        <div style="padding:6px 0;">👤×8 → <span style="color:var(--coral);">20% 할인</span></div>
-        <div style="padding:6px 0;">👤×10+ → <span style="color:var(--red);">25% 할인</span> 🔥</div>
+        <div style="padding:6px 0;">👤×1 → <span style="color:var(--gray);">정가</span></div>
+        <div style="padding:6px 0;">👤×2~3 → <span style="color:var(--coral);">5% 할인</span></div>
+        <div style="padding:6px 0;">👤×4~5 → <span style="color:var(--coral);">10% 할인</span></div>
+        <div style="padding:6px 0;">👤×6+ → <span style="color:var(--red);">15% 할인</span> 🔥</div>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-title">🔥 모집 중인 그룹</div>
+      <div class="card-title" data-i18n="activeGroups">🔥 모집 중인 그룹</div>
       <div id="group-list"></div>
     </div>
   </div>
@@ -477,7 +520,7 @@ body {
   <div class="screen" id="screen-complete">
     <div style="text-align:center;padding:20px 0;">
       <div style="font-size:60px;animation:popIn 0.5s ease;">✅</div>
-      <div style="font-size:22px;margin:10px 0;">주문 완료!</div>
+      <div style="font-size:22px;margin:10px 0;" data-i18n="orderComplete">주문 완료!</div>
     </div>
 
     <div class="card">
@@ -602,9 +645,18 @@ body {
     </div>
 
     <div class="card">
-      <div class="card-title">⚙️ 식이 설정</div>
+      <div class="card-title" data-i18n="langSetting">🌐 언어 설정</div>
+      <div class="lang-options" id="lang-options">
+        <div class="lang-radio active" data-lang="ko" onclick="setLang('ko')">🇰🇷<br>한국어</div>
+        <div class="lang-radio" data-lang="en" onclick="setLang('en')">🇺🇸<br>English</div>
+        <div class="lang-radio" data-lang="hi" onclick="setLang('hi')">🇮🇳<br>हिन्दी</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title" data-i18n="dietSetting">⚙️ 식이 설정</div>
       <div class="toggle-row">
-        <span>🥩 고단백 모드</span>
+        <span data-i18n="highProtein">🥩 고단백 모드</span>
         <div class="toggle-switch" data-pref="highProtein" onclick="togglePref(this)"></div>
       </div>
       <div class="toggle-row">
@@ -631,19 +683,19 @@ body {
   <!-- Bottom Nav -->
   <nav class="bottom-nav">
     <button class="nav-item active" data-screen="home" onclick="navigate('home')">
-      <span class="nav-icon">🏠</span>홈
+      <span class="nav-icon">🏠</span><span data-i18n="navHome">홈</span>
     </button>
     <button class="nav-item" data-screen="simulator" onclick="navigate('simulator')">
-      <span class="nav-icon">🧱</span>조합
+      <span class="nav-icon">🧱</span><span data-i18n="navBuild">조합</span>
     </button>
     <button class="nav-item" data-screen="rush" onclick="navigate('rush')">
-      <span class="nav-icon">🎮</span>러시
+      <span class="nav-icon">🎮</span><span data-i18n="navRush">러시</span>
     </button>
     <button class="nav-item" data-screen="group" onclick="navigate('group')">
-      <span class="nav-icon">👥</span>같이밥
+      <span class="nav-icon">👥</span><span data-i18n="navTogether">같이밥</span>
     </button>
     <button class="nav-item" data-screen="mypage" onclick="navigate('mypage')">
-      <span class="nav-icon">👤</span>MY
+      <span class="nav-icon">👤</span><span data-i18n="navMy">MY</span>
     </button>
   </nav>
 </div>
@@ -690,13 +742,28 @@ const BLOCKS = [
   { id:'fruit', name:'과일컵', cat:'dessert', cal:80, protein:1, carb:18, fat:0, price:1500, img:'images/fruit.png', emoji:'🍓' },
   { id:'yogurt', name:'요거트', cat:'dessert', cal:90, protein:4, carb:14, fat:2, price:1200, img:'images/fruit.png', emoji:'🍦' },
   { id:'mochi', name:'찹쌀떡', cat:'dessert', cal:120, protein:2, carb:26, fat:1, price:1000, img:'images/fruit.png', emoji:'🍡' },
-  { id:'curry', name:'카레소스', cat:'carb', cal:100, protein:3, carb:15, fat:4, price:1400, img:'images/curry.png', emoji:'🍛' },
+  { id:'curry', name:'카레소스', cat:'carb', cal:100, protein:3, carb:15, fat:4, price:1400, img:'images/curry.png', emoji:'🍛', tags:[] },
+  // ── Multinational Protein ──
+  { id:'tandoori', name:'탄두리치킨 Tandoori Chicken', cat:'protein', cal:190, protein:26, carb:6, fat:6, price:1500, img:'images/bulgogi.png', emoji:'🍗', tags:['할랄'] },
+  { id:'falafel', name:'팔라펠 Falafel', cat:'protein', cal:140, protein:10, carb:16, fat:5, price:1200, img:'images/tofu.png', emoji:'🧆', tags:['비건','할랄'] },
+  { id:'salmon_teri', name:'연어 Teriyaki Salmon', cat:'protein', cal:200, protein:24, carb:8, fat:8, price:1800, img:'images/bulgogi.png', emoji:'🐟', tags:[] },
+  // ── Multinational Veggie ──
+  { id:'hummus', name:'후무스 Hummus', cat:'veggie', cal:110, protein:5, carb:12, fat:5, price:1000, img:'images/spinach.png', emoji:'🫘', tags:['비건'] },
+  { id:'padthai_veg', name:'팟타이채소 Pad Thai Veg', cat:'veggie', cal:130, protein:4, carb:20, fat:3, price:1100, img:'images/spinach.png', emoji:'🍜', tags:['비건'] },
+  { id:'kimchi_v2', name:'김치 Kimchi', cat:'veggie', cal:20, protein:1, carb:3, fat:0, price:500, img:'images/spinach.png', emoji:'🥬', tags:['비건'] },
+  // ── Multinational Dessert ──
+  { id:'mango_lassi', name:'망고라씨 Mango Lassi', cat:'dessert', cal:120, protein:3, carb:22, fat:2, price:1300, img:'images/fruit.png', emoji:'🥭', tags:[] },
+  { id:'mochi_v2', name:'모찌 Mochi', cat:'dessert', cal:90, protein:2, carb:18, fat:1, price:900, img:'images/fruit.png', emoji:'🍡', tags:[] },
 ];
 
 const BASES = {
-  rice: { name:'흰쌀밥', cal:300, carb:65, protein:5, fat:0, price:1000 },
-  brown: { name:'현미밥', cal:280, carb:58, protein:6, fat:1, price:1200 },
-  noodle: { name:'곤약면', cal:30, carb:5, protein:1, fat:0, price:1500 },
+  rice: { name:'흰쌀밥', cal:300, carb:65, protein:5, fat:0, price:1000, emoji:'🍚' },
+  brown: { name:'잡곡밥', cal:280, carb:58, protein:6, fat:1, price:1200, emoji:'🍙' },
+  fried: { name:'볶음밥', cal:350, carb:60, protein:8, fat:8, price:1500, emoji:'🍳' },
+  naan: { name:'난 Naan', cal:260, carb:45, protein:8, fat:5, price:800, emoji:'🫓' },
+  tortilla: { name:'또띠아 Tortilla', cal:220, carb:38, protein:6, fat:4, price:700, emoji:'🌯' },
+  couscous: { name:'쿠스쿠스 Couscous', cal:180, carb:36, protein:6, fat:1, price:700, emoji:'🍝' },
+  saladbase: { name:'샐러드 Salad', cal:30, carb:5, protein:2, fat:0, price:500, emoji:'🥗' },
 };
 
 const ROULETTE_SEGMENTS = [
@@ -710,7 +777,7 @@ const ROULETTE_SEGMENTS = [
   { label:'꽝!', discount:0, color:'var(--gray)' },
 ];
 
-const GROUP_NAMES = ['점심팟🍱','다이어트팟💪','많이먹자팟🔥','채식팟🥬','랜덤팟🎲'];
+const GROUP_NAMES = ['생명연구 연구실 점심🔬','농구 동아리 저녁🏀','도서관 스터디📚','다이어트팟💪','랜덤팟🎲'];
 const MEMBER_EMOJIS = ['😊','😎','🤓','🥳','😋','🤗','😆','🧑‍💻','👩‍🎓','👨‍🎓'];
 
 // ============================================================
@@ -723,7 +790,7 @@ let state = JSON.parse(localStorage.getItem('legobab-state') || 'null') || {
   greenPoints: 0,
   returns: 0,
   prefs: { highProtein:false, vegFirst:false, lowCal:false, allergyFilter:false, pickupNotif:true },
-  weekScores: [0,0,0,0,0,0,0],
+  weekScores: [87,62,91,0,0,0,0],
   rushDiscount: 0,
   groups: [],
   treeLevel: 1,
@@ -753,35 +820,66 @@ function navigate(screen) {
 // ============================================================
 // HOME
 // ============================================================
+// Sample past orders for quick reorder
+const SAMPLE_ORDERS = [
+  { items:['잡곡밥','소불고기','시금치','과일컵'], price:4000, cal:520, ago:'어제' },
+  { items:['난','탄두리치킨','후무스'], price:3500, cal:560, ago:'2일 전' },
+  { items:['볶음밥','카레치킨','감자샐러드','김치'], price:4200, cal:610, ago:'3일 전' },
+];
+
+// Sample weekly nutrition scores
+const SAMPLE_WEEK_SCORES = [87, 62, 91, 0, 0, 0, 0]; // 월~일
+
 function renderHome() {
-  // Week chart
+  // Week chart with sample data
   const chart = document.getElementById('week-chart');
   const days = ['월','화','수','목','금','토','일'];
   const colors = [
     'var(--coral)','var(--pink)','var(--mint)','var(--lavender)',
     'var(--yellow)','var(--sky)','var(--light-gray)'
   ];
+  // Use sample data if no real scores yet
+  const scores = state.weekScores.some(s => s > 0) ? state.weekScores : SAMPLE_WEEK_SCORES;
+  const scoreEmojis = (s) => s >= 80 ? '🟢' : s >= 50 ? '🟡' : s > 0 ? '🔴' : '';
   chart.innerHTML = days.map((d,i) => {
-    const h = Math.max(10, (state.weekScores[i]||0));
+    const s = scores[i] || 0;
+    const h = s > 0 ? Math.max(15, s) : 5;
+    const label = s > 0 ? `${s}점${scoreEmojis(s)}` : '—';
     return `<div class="week-bar-wrap">
-      <div class="week-bar" style="height:${h}%;background:${colors[i]}"></div>
+      <div style="font-size:9px;color:var(--gray);margin-bottom:2px;">${label}</div>
+      <div class="week-bar" style="height:${h}%;background:${s>0?colors[i]:'var(--light-gray)'}"></div>
       <div class="week-label">${d}</div>
     </div>`;
   }).join('');
+  // Weekly average
+  const validScores = scores.filter(s => s > 0);
+  if (validScores.length > 0) {
+    const avg = Math.round(validScores.reduce((a,b)=>a+b,0) / validScores.length);
+    chart.insertAdjacentHTML('afterend',
+      `<div id="week-avg" style="font-size:13px;color:var(--coral);text-align:center;margin-top:4px;">주간 평균: ${avg}점</div>`);
+    // Remove old avg if exists
+    const oldAvg = chart.parentElement.querySelectorAll('#week-avg');
+    if (oldAvg.length > 1) oldAvg[0].remove();
+  }
 
-  // Quick reorder
+  // Quick reorder — show sample data if no real orders
   const qr = document.getElementById('quick-reorder');
-  if (state.orders.length > 0) {
-    const last = state.orders[state.orders.length - 1];
-    qr.innerHTML = `<div style="display:flex;align-items:center;gap:10px;">
-      <div style="font-size:24px;">🔄</div>
+  const ordersToShow = state.orders.length > 0
+    ? state.orders.slice(-3).reverse().map((o,i) => ({
+        items: o.items, price: o.price, cal: o.cal, ago: i===0?'최근':'이전'
+      }))
+    : SAMPLE_ORDERS;
+
+  qr.innerHTML = ordersToShow.map(o => `
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--light-gray);">
+      <div style="font-size:20px;">🔄</div>
       <div style="flex:1;">
-        <div style="font-size:14px;">${last.items.join(' + ')}</div>
-        <div style="font-size:12px;color:var(--gray);">${last.cal}kcal · ${last.price}원</div>
+        <div style="font-size:13px;">${o.items.join(' + ')}</div>
+        <div style="font-size:11px;color:var(--gray);">${o.cal}kcal · ₩${o.price.toLocaleString()} · ${o.ago}</div>
       </div>
       <button class="btn btn-coral btn-sm" onclick="navigate('simulator')">재주문</button>
-    </div>`;
-  }
+    </div>
+  `).join('');
 }
 
 // ============================================================
@@ -790,16 +888,28 @@ function renderHome() {
 let currentFilter = 'all';
 
 function renderSimulator() {
+  renderBaseGrid();
   renderBlockList();
   updateNutrition();
 }
 
-function selectBase(el, base) {
-  state.selectedBase = base;
-  el.parentElement.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-  el.classList.add('active');
-  updateNutrition();
+function renderBaseGrid() {
+  const grid = document.getElementById('base-grid');
+  grid.innerHTML = Object.entries(BASES).map(([key, b]) => {
+    const active = state.selectedBase === key ? 'active' : '';
+    return `<div class="base-card ${active}" onclick="selectBaseCard('${key}')">
+      <div class="base-card-emoji">${b.emoji||'🍚'}</div>
+      <div>${b.name}</div>
+      <div class="base-card-cal">${b.cal}kcal · ${b.price.toLocaleString()}원</div>
+    </div>`;
+  }).join('');
+}
+
+function selectBaseCard(key) {
+  state.selectedBase = key;
   saveState();
+  renderBaseGrid();
+  updateNutrition();
 }
 
 function filterBlocks(cat, el) {
@@ -815,12 +925,18 @@ function renderBlockList() {
   list.innerHTML = filtered.map(b => {
     const sel = state.selectedBlocks.includes(b.id);
     const catColors = { protein:'var(--red)', veggie:'var(--green)', carb:'var(--yellow)', dessert:'var(--purple)' };
+    const tagsHtml = (b.tags && b.tags.length) ? `<div class="block-tags">${b.tags.map(t => {
+      if(t==='할랄') return '<span class="btag btag-halal">☪️ 할랄</span>';
+      if(t==='비건') return '<span class="btag btag-vegan">🌱 비건</span>';
+      return `<span class="btag">${t}</span>`;
+    }).join('')}</div>` : '';
     return `<div class="block-item ${sel?'selected':''}" onclick="toggleBlock('${b.id}')" 
       style="border-left:4px solid ${catColors[b.cat]}">
       <img class="block-img" src="${b.img}" onerror="this.outerHTML='<div style=\\'width:56px;height:56px;border-radius:10px;background:var(--light-gray);display:flex;align-items:center;justify-content:center;font-size:24px\\'>${b.emoji}</div>'">
       <div class="block-info">
         <div class="block-name">${b.emoji} ${b.name}</div>
         <div class="block-cal">${b.cal}kcal · ${b.price.toLocaleString()}원</div>
+        ${tagsHtml}
       </div>
       <div class="block-check">${sel?'✓':''}</div>
     </div>`;
@@ -965,18 +1081,24 @@ function renderMenu(cat) {
   const filtered = (!cat || cat === 'all') ? BLOCKS : BLOCKS.filter(b => b.cat === cat);
   const catLabels = { protein:'🔴 단백질', veggie:'🟢 채소', carb:'🟡 탄수', dessert:'🟣 디저트' };
   const catColors = { protein:'var(--red)', veggie:'var(--green)', carb:'var(--yellow)', dessert:'var(--purple)' };
-  list.innerHTML = filtered.map(b => `
-    <div class="card" style="display:flex;gap:12px;align-items:center;border-left:4px solid ${catColors[b.cat]};">
+  list.innerHTML = filtered.map(b => {
+    const tagsHtml = (b.tags && b.tags.length) ? b.tags.map(t => {
+      if(t==='할랄') return '<span class="btag btag-halal">☪️ 할랄</span>';
+      if(t==='비건') return '<span class="btag btag-vegan">🌱 비건</span>';
+      return `<span class="btag">${t}</span>`;
+    }).join(' ') : '';
+    return `<div class="card" style="display:flex;gap:12px;align-items:center;border-left:4px solid ${catColors[b.cat]};">
       <img src="${b.img}" style="width:64px;height:64px;border-radius:10px;object-fit:cover;"
         onerror="this.outerHTML='<div style=\\'width:64px;height:64px;border-radius:10px;background:var(--light-gray);display:flex;align-items:center;justify-content:center;font-size:28px\\'>${b.emoji}</div>'">
       <div style="flex:1;">
         <div style="font-size:15px;">${b.emoji} ${b.name}</div>
         <div style="font-size:12px;color:var(--gray);">${b.cal}kcal · P${b.protein}g C${b.carb}g F${b.fat}g</div>
         <span class="tag tag-${b.cat==='protein'?'red':b.cat==='veggie'?'green':b.cat==='carb'?'yellow':'purple'}">${catLabels[b.cat]}</span>
+        ${tagsHtml}
       </div>
       <div style="font-size:14px;color:var(--coral);">${b.price.toLocaleString()}원</div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
 
 function filterMenu(cat, el) {
@@ -1112,32 +1234,33 @@ function renderRushBlocks() {
 // ============================================================
 // GROUP ORDER
 // ============================================================
+function getGroupDiscount(memberCount) {
+  if (memberCount >= 6) return 15;
+  if (memberCount >= 4) return 10;
+  if (memberCount >= 2) return 5;
+  return 0;
+}
+
+const SAMPLE_GROUPS = [
+  { name:'생명연구 연구실 점심🔬', members:['🧑‍💻','😊','🤓','😎'], target:6, timeLeft:18 },
+  { name:'농구 동아리 저녁🏀', members:['😋','🥳','😆'], target:5, timeLeft:25 },
+  { name:'도서관 스터디📚', members:['👩‍🎓','👨‍🎓','🤗','😊','🤓','😎'], target:8, timeLeft:12 },
+];
+
 function renderGroups() {
   const list = document.getElementById('group-list');
   if (state.groups.length === 0) {
-    // Generate some sample groups
-    for (let i = 0; i < 3; i++) {
-      const memberCount = Math.floor(Math.random()*5)+2;
-      const members = [];
-      for (let j = 0; j < memberCount; j++) {
-        members.push(MEMBER_EMOJIS[Math.floor(Math.random()*MEMBER_EMOJIS.length)]);
-      }
-      state.groups.push({
-        name: GROUP_NAMES[i],
-        members,
-        target: Math.floor(Math.random()*5)+5,
-        timeLeft: Math.floor(Math.random()*20)+5,
-      });
-    }
+    state.groups = SAMPLE_GROUPS.map(g => ({...g, members:[...g.members]}));
     saveState();
   }
 
   list.innerHTML = state.groups.map((g,i) => {
-    const tier = g.members.length >= 10 ? '25%' : g.members.length >= 8 ? '20%' : g.members.length >= 5 ? '15%' : g.members.length >= 3 ? '10%' : '0%';
+    const disc = getGroupDiscount(g.members.length);
+    const discLabel = disc > 0 ? disc + '% 할인' : '정가';
     return `<div class="group-card">
       <div style="display:flex;justify-content:space-between;align-items:center;">
         <div style="font-size:15px;">${g.name}</div>
-        <span class="discount-badge">${tier} 할인</span>
+        <span class="discount-badge">${discLabel}</span>
       </div>
       <div class="group-members">
         ${g.members.map(m => `<div class="group-avatar" style="background:${['var(--pink)','var(--mint)','var(--sky)','var(--lavender)','var(--yellow)'][Math.floor(Math.random()*5)]}">${m}</div>`).join('')}
