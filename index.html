@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>레고밥 LegoBab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="images/mascot.png">
+<style>
+:root {
+  --pink: #FFB6C1;
+  --mint: #98E0C8;
+  --cream: #FFFCF0;
+  --coral: #FF9682;
+  --lavender: #B4A0E6;
+  --sky: #AAD2FF;
+  --red: #F06450;
+  --green: #78C88C;
+  --yellow: #FFD250;
+  --purple: #B4A0E6;
+  --dark: #3A3A3A;
+  --gray: #888;
+  --light-gray: #E8E8E8;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+body {
+  font-family: 'Jua', sans-serif;
+  background: #f0f0f0;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  color: var(--dark);
+}
+
+#phone-frame {
+  width: 375px;
+  min-height: 100vh;
+  background: var(--cream);
+  position: relative;
+  overflow-x: hidden;
+  box-shadow: 0 0 40px rgba(0,0,0,0.1);
+}
+
+@media (max-width: 430px) {
+  #phone-frame { width: 100%; box-shadow: none; }
+}
+
+/* Header */
+.header {
+  position: sticky; top:0; z-index:100;
+  background: linear-gradient(135deg, var(--pink), var(--coral));
+  padding: 16px 20px 12px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.header-title { font-size:22px; color:#fff; text-shadow: 1px 1px 2px rgba(0,0,0,0.15); }
+.header-mascot { width:36px; height:36px; border-radius:50%; object-fit:cover; border:2px solid #fff; }
+
+/* Screen container */
+.screen { display:none; padding:16px 16px 90px; animation: fadeIn 0.25s ease; }
+.screen.active { display:block; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+/* Bottom Nav */
+.bottom-nav {
+  position: fixed; bottom:0; left:50%; transform:translateX(-50%);
+  width: 375px; background:#fff;
+  display:flex; border-top:2px solid var(--light-gray);
+  z-index:200; padding-bottom: env(safe-area-inset-bottom, 8px);
+}
+@media (max-width: 430px) { .bottom-nav { width:100%; } }
+.nav-item {
+  flex:1; display:flex; flex-direction:column; align-items:center;
+  padding:8px 0 6px; cursor:pointer; transition:all 0.2s;
+  border:none; background:none; font-family:'Jua',sans-serif;
+  color: var(--gray); font-size:10px;
+}
+.nav-item .nav-icon { font-size:22px; margin-bottom:2px; }
+.nav-item.active { color: var(--coral); }
+.nav-item:active { transform:scale(0.92); }
+
+/* Cards */
+.card {
+  background:#fff; border-radius:16px; padding:16px;
+  margin-bottom:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06);
+}
+.card-title { font-size:16px; margin-bottom:8px; display:flex; align-items:center; gap:6px; }
+
+/* Buttons */
+.btn {
+  display:inline-flex; align-items:center; justify-content:center; gap:6px;
+  padding:12px 24px; border-radius:30px; border:none;
+  font-family:'Jua',sans-serif; font-size:15px; cursor:pointer;
+  transition: all 0.2s; color:#fff;
+}
+.btn:active { transform:scale(0.95); }
+.btn-coral { background: linear-gradient(135deg, var(--coral), var(--pink)); }
+.btn-mint { background: linear-gradient(135deg, var(--mint), #6BD4A8); }
+.btn-purple { background: linear-gradient(135deg, var(--lavender), #9B87D6); }
+.btn-yellow { background: linear-gradient(135deg, var(--yellow), #FFB830); color:var(--dark); }
+.btn-full { width:100%; }
+.btn-sm { padding:8px 16px; font-size:13px; }
+
+/* Tags */
+.tag {
+  display:inline-block; padding:4px 10px; border-radius:20px;
+  font-size:12px; margin:2px;
+}
+.tag-red { background:#FDEAEA; color:var(--red); }
+.tag-green { background:#E8F8EE; color:var(--green); }
+.tag-yellow { background:#FFF7DD; color:#C49500; }
+.tag-purple { background:#F0EAFA; color:var(--purple); }
+
+/* Progress bars */
+.progress-bar {
+  height:10px; border-radius:5px; background:var(--light-gray);
+  overflow:hidden; margin:4px 0;
+}
+.progress-fill {
+  height:100%; border-radius:5px; transition: width 0.5s ease;
+}
+
+/* Block item */
+.block-item {
+  display:flex; align-items:center; gap:10px;
+  padding:10px; border-radius:12px; margin-bottom:8px;
+  cursor:pointer; transition:all 0.2s; border:2px solid transparent;
+}
+.block-item:active { transform:scale(0.97); }
+.block-item.selected { border-color: var(--coral); background:#FFF5F3; }
+.block-img { width:56px; height:56px; border-radius:10px; object-fit:cover; }
+.block-info { flex:1; }
+.block-name { font-size:14px; }
+.block-cal { font-size:12px; color:var(--gray); }
+.block-check { width:24px; height:24px; border-radius:50%; border:2px solid var(--light-gray); display:flex; align-items:center; justify-content:center; font-size:14px; }
+.block-item.selected .block-check { background:var(--coral); border-color:var(--coral); color:#fff; }
+
+/* Roulette */
+.roulette-wheel {
+  width:240px; height:240px; margin:20px auto;
+  border-radius:50%; border:6px solid var(--coral);
+  position:relative; overflow:hidden;
+  transition: transform 3s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+}
+.roulette-segment {
+  position:absolute; width:50%; height:50%;
+  transform-origin: 100% 100%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:13px; font-family:'Jua',sans-serif; color:#fff;
+}
+.roulette-pointer {
+  position:absolute; top:-8px; left:50%; transform:translateX(-50%);
+  width:0; height:0; border-left:12px solid transparent;
+  border-right:12px solid transparent; border-top:20px solid var(--red);
+  z-index:10;
+}
+
+/* Group order */
+.group-card {
+  background:#fff; border-radius:14px; padding:14px;
+  margin-bottom:10px; border-left:4px solid var(--mint);
+  box-shadow:0 1px 4px rgba(0,0,0,0.05);
+}
+.group-members { display:flex; gap:-4px; margin:8px 0; }
+.group-avatar {
+  width:28px; height:28px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:13px; margin-right:-6px; border:2px solid #fff;
+}
+
+/* My page */
+.profile-header {
+  text-align:center; padding:20px 0;
+}
+.profile-avatar {
+  width:80px; height:80px; border-radius:50%;
+  background: linear-gradient(135deg, var(--pink), var(--coral));
+  display:flex; align-items:center; justify-content:center;
+  font-size:36px; margin:0 auto 10px;
+}
+.stats-row { display:flex; gap:8px; margin:12px 0; }
+.stat-box {
+  flex:1; background:#fff; border-radius:12px; padding:12px 8px;
+  text-align:center; box-shadow:0 1px 4px rgba(0,0,0,0.05);
+}
+.stat-num { font-size:22px; color:var(--coral); }
+.stat-label { font-size:11px; color:var(--gray); }
+
+/* Toggle */
+.toggle-row {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:12px 0; border-bottom:1px solid var(--light-gray);
+}
+.toggle-switch {
+  width:44px; height:24px; border-radius:12px; background:var(--light-gray);
+  position:relative; cursor:pointer; transition:background 0.3s;
+}
+.toggle-switch.on { background:var(--mint); }
+.toggle-switch::after {
+  content:''; position:absolute; top:2px; left:2px;
+  width:20px; height:20px; border-radius:50%; background:#fff;
+  transition:transform 0.3s; box-shadow:0 1px 3px rgba(0,0,0,0.2);
+}
+.toggle-switch.on::after { transform:translateX(20px); }
+
+/* Tree animation */
+.tree-container { text-align:center; padding:20px; }
+.tree { font-size:80px; animation: treeGrow 1s ease; }
+@keyframes treeGrow { 0%{transform:scale(0.5);opacity:0} 50%{transform:scale(1.1)} 100%{transform:scale(1);opacity:1} }
+.points-badge {
+  display:inline-block; background:var(--mint); color:#fff;
+  padding:8px 20px; border-radius:20px; font-size:16px;
+  animation: popIn 0.5s ease 0.5s both;
+}
+@keyframes popIn { 0%{transform:scale(0)} 50%{transform:scale(1.2)} 100%{transform:scale(1)} }
+
+/* Notification mockup */
+.notif-mockup {
+  background:#fff; border-radius:14px; padding:14px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.12); margin:12px 0;
+  display:flex; align-items:center; gap:10px;
+  animation: slideDown 0.5s ease;
+}
+@keyframes slideDown { from{transform:translateY(-20px);opacity:0} to{transform:translateY(0);opacity:1} }
+.notif-icon { font-size:28px; }
+
+/* Banner */
+.banner {
+  border-radius:16px; padding:16px; margin-bottom:12px;
+  display:flex; align-items:center; gap:12px; cursor:pointer;
+  transition:transform 0.2s;
+}
+.banner:active { transform:scale(0.97); }
+.banner-rush { background:linear-gradient(135deg, #FF9682, #FFB6C1); color:#fff; }
+.banner-group { background:linear-gradient(135deg, #98E0C8, #AAD2FF); color:#fff; }
+.banner-icon { font-size:32px; }
+.banner-text { font-size:14px; }
+.banner-title { font-size:17px; }
+
+/* Weekly chart */
+.week-chart { display:flex; align-items:flex-end; gap:6px; height:100px; padding:10px 0; }
+.week-bar-wrap { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; }
+.week-bar {
+  width:100%; border-radius:6px 6px 0 0;
+  transition: height 0.5s ease;
+}
+.week-label { font-size:10px; color:var(--gray); }
+
+/* Nutrition donut placeholder */
+.nutrition-ring {
+  width:100px; height:100px; border-radius:50%;
+  border:8px solid var(--light-gray); position:relative;
+  display:flex; align-items:center; justify-content:center;
+  margin:0 auto;
+}
+.nutrition-ring-value { font-size:20px; color:var(--coral); }
+
+/* Category filter */
+.cat-filters { display:flex; gap:6px; margin-bottom:12px; flex-wrap:wrap; }
+.cat-btn {
+  padding:6px 14px; border-radius:20px; border:2px solid var(--light-gray);
+  background:#fff; font-family:'Jua',sans-serif; font-size:13px;
+  cursor:pointer; transition:all 0.2s;
+}
+.cat-btn.active { border-color:var(--coral); background:#FFF5F3; color:var(--coral); }
+
+/* Countdown */
+.countdown {
+  font-size:28px; color:var(--red); text-align:center;
+  padding:10px; animation: pulse 1s infinite;
+}
+@keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
+
+/* Discount badge */
+.discount-badge {
+  display:inline-block; background:var(--red); color:#fff;
+  padding:4px 10px; border-radius:10px; font-size:12px;
+}
+
+/* Modal */
+.modal-overlay {
+  display:none; position:fixed; top:0; left:0; right:0; bottom:0;
+  background:rgba(0,0,0,0.5); z-index:300;
+  justify-content:center; align-items:center;
+}
+.modal-overlay.show { display:flex; }
+.modal {
+  background:#fff; border-radius:20px; padding:24px;
+  width:320px; max-width:90%; text-align:center;
+  animation: popIn 0.3s ease;
+}
+
+/* Eco badge row */
+.eco-row { display:flex; gap:8px; margin:10px 0; }
+.eco-badge {
+  flex:1; text-align:center; padding:10px; border-radius:12px;
+  background:#E8F8EE;
+}
+.eco-badge .eco-num { font-size:18px; color:var(--green); }
+.eco-badge .eco-label { font-size:10px; color:var(--gray); }
+
+/* Scrollbar */
+::-webkit-scrollbar { width:4px; }
+::-webkit-scrollbar-thumb { background:var(--pink); border-radius:2px; }
+</style>
+</head>
+<body>
+
+<div id="phone-frame">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-title">🧱 레고밥</div>
+    <img class="header-mascot" src="images/mascot.png" alt="mascot" onerror="this.style.display='none'">
+  </div>
+
+  <!-- ==================== HOME ==================== -->
+  <div class="screen active" id="screen-home">
+    <!-- AI 추천 -->
+    <div class="card">
+      <div class="card-title">🤖 AI 오늘의 추천</div>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <img src="images/bulgogi.png" style="width:70px;height:70px;border-radius:12px;object-fit:cover;" onerror="this.outerHTML='<div style=\'width:70px;height:70px;border-radius:12px;background:var(--pink);display:flex;align-items:center;justify-content:center;font-size:28px\'>🥩</div>'">
+        <div>
+          <div style="font-size:15px;">불고기 + 시금치 + 감자</div>
+          <div style="font-size:12px;color:var(--gray);">균형 점수 92점 · 520kcal</div>
+          <span class="tag tag-red">🔴 단백질</span>
+          <span class="tag tag-green">🟢 채소</span>
+          <span class="tag tag-yellow">🟡 탄수</span>
+        </div>
+      </div>
+      <button class="btn btn-coral btn-full btn-sm" style="margin-top:10px;" onclick="navigate('simulator')">이 조합으로 시작 →</button>
+    </div>
+
+    <!-- 빠른 재주문 -->
+    <div class="card">
+      <div class="card-title">⚡ 빠른 재주문</div>
+      <div id="quick-reorder">
+        <div style="color:var(--gray);font-size:13px;text-align:center;padding:10px;">아직 주문 기록이 없어요!</div>
+      </div>
+    </div>
+
+    <!-- 주간 영양 -->
+    <div class="card">
+      <div class="card-title">📊 이번 주 영양 밸런스</div>
+      <div class="week-chart" id="week-chart"></div>
+      <div style="font-size:12px;color:var(--gray);text-align:center;">월~금 균형 점수 추이</div>
+    </div>
+
+    <!-- 레고러시 배너 -->
+    <div class="banner banner-rush" onclick="navigate('rush')">
+      <div class="banner-icon">🎰</div>
+      <div>
+        <div class="banner-title">레고 러시 진행중!</div>
+        <div class="banner-text">지금 돌리면 최대 50% 할인 🔥</div>
+      </div>
+    </div>
+
+    <!-- 같이밥 배너 -->
+    <div class="banner banner-group" onclick="navigate('group')">
+      <div class="banner-icon">👥</div>
+      <div>
+        <div class="banner-title">같이밥 모집중</div>
+        <div class="banner-text">3명 더 모이면 20% 할인!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SIMULATOR ==================== -->
+  <div class="screen" id="screen-simulator">
+    <div class="card">
+      <div class="card-title">🍚 베이스 선택</div>
+      <div class="cat-filters">
+        <button class="cat-btn active" onclick="selectBase(this,'rice')">🍚 흰쌀밥</button>
+        <button class="cat-btn" onclick="selectBase(this,'brown')">🍚 현미밥</button>
+        <button class="cat-btn" onclick="selectBase(this,'noodle')">🍜 곤약면</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🧱 블록 선택 <span style="font-size:12px;color:var(--gray);">(최대 4개)</span></div>
+      <div class="cat-filters" id="block-category-filters">
+        <button class="cat-btn active" data-cat="all" onclick="filterBlocks('all',this)">전체</button>
+        <button class="cat-btn" data-cat="protein" onclick="filterBlocks('protein',this)">🔴 단백질</button>
+        <button class="cat-btn" data-cat="veggie" onclick="filterBlocks('veggie',this)">🟢 채소</button>
+        <button class="cat-btn" data-cat="carb" onclick="filterBlocks('carb',this)">🟡 탄수</button>
+        <button class="cat-btn" data-cat="dessert" onclick="filterBlocks('dessert',this)">🟣 디저트</button>
+      </div>
+      <div id="block-list"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📊 실시간 영양 분석</div>
+      <div id="nutrition-bars"></div>
+      <div style="text-align:center;margin-top:10px;">
+        <div style="font-size:13px;color:var(--gray);">균형 점수</div>
+        <div id="balance-score" style="font-size:36px;color:var(--coral);">0점</div>
+      </div>
+    </div>
+
+    <button class="btn btn-coral btn-full" id="order-btn" onclick="placeOrder()">
+      🧱 주문하기 · <span id="total-price">0</span>원
+    </button>
+  </div>
+
+  <!-- ==================== MENU LINEUP ==================== -->
+  <div class="screen" id="screen-menu">
+    <div class="card-title" style="font-size:18px;margin-bottom:12px;">📋 메뉴 라인업</div>
+    <div class="cat-filters" id="menu-cat-filters">
+      <button class="cat-btn active" data-cat="all" onclick="filterMenu('all',this)">전체</button>
+      <button class="cat-btn" data-cat="protein" onclick="filterMenu('protein',this)">🔴 단백질</button>
+      <button class="cat-btn" data-cat="veggie" onclick="filterMenu('veggie',this)">🟢 채소</button>
+      <button class="cat-btn" data-cat="carb" onclick="filterMenu('carb',this)">🟡 탄수</button>
+      <button class="cat-btn" data-cat="dessert" onclick="filterMenu('dessert',this)">🟣 디저트</button>
+    </div>
+    <div id="menu-list"></div>
+  </div>
+
+  <!-- ==================== RUSH ==================== -->
+  <div class="screen" id="screen-rush">
+    <div class="card" style="text-align:center;">
+      <div class="card-title" style="justify-content:center;">🎰 레고 러시</div>
+      <div style="font-size:13px;color:var(--gray);margin-bottom:4px;">남은 시간</div>
+      <div class="countdown" id="rush-countdown">05:00</div>
+    </div>
+
+    <div class="card" style="text-align:center;">
+      <div style="position:relative;display:inline-block;">
+        <div class="roulette-pointer"></div>
+        <div class="roulette-wheel" id="roulette-wheel">
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:20px;z-index:5;">
+            🎯
+          </div>
+        </div>
+      </div>
+      <br>
+      <button class="btn btn-coral" id="spin-btn" onclick="spinRoulette()" style="margin-top:16px;">
+        🎰 돌리기!
+      </button>
+      <div id="spin-result" style="margin-top:12px;font-size:16px;min-height:24px;"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🧱 할인 블록 현황</div>
+      <div id="rush-blocks"></div>
+    </div>
+  </div>
+
+  <!-- ==================== GROUP ORDER ==================== -->
+  <div class="screen" id="screen-group">
+    <div class="card">
+      <div class="card-title">👥 같이밥 만들기</div>
+      <div style="font-size:13px;color:var(--gray);margin-bottom:10px;">친구들과 함께 주문하면 할인!</div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-mint btn-sm" onclick="createGroup()">+ 그룹 만들기</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📊 할인 티어</div>
+      <div style="font-size:13px;">
+        <div style="padding:6px 0;">👤×3 → <span style="color:var(--coral);">10% 할인</span></div>
+        <div style="padding:6px 0;">👤×5 → <span style="color:var(--coral);">15% 할인</span></div>
+        <div style="padding:6px 0;">👤×8 → <span style="color:var(--coral);">20% 할인</span></div>
+        <div style="padding:6px 0;">👤×10+ → <span style="color:var(--red);">25% 할인</span> 🔥</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🔥 모집 중인 그룹</div>
+      <div id="group-list"></div>
+    </div>
+  </div>
+
+  <!-- ==================== ORDER COMPLETE ==================== -->
+  <div class="screen" id="screen-complete">
+    <div style="text-align:center;padding:20px 0;">
+      <div style="font-size:60px;animation:popIn 0.5s ease;">✅</div>
+      <div style="font-size:22px;margin:10px 0;">주문 완료!</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📍 픽업 정보</div>
+      <div style="font-size:14px;">
+        <div style="padding:4px 0;">📌 DGIST 학생식당 1층 픽업존</div>
+        <div style="padding:4px 0;">⏰ 예상 준비시간: <strong style="color:var(--coral);">12분</strong></div>
+        <div style="padding:4px 0;">🔢 주문번호: <strong id="order-number">-</strong></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🌿 에코 스탯</div>
+      <div class="eco-row">
+        <div class="eco-badge">
+          <div class="eco-num" id="eco-plastic">0g</div>
+          <div class="eco-label">플라스틱 절약</div>
+        </div>
+        <div class="eco-badge">
+          <div class="eco-num" id="eco-co2">0g</div>
+          <div class="eco-label">CO₂ 감소</div>
+        </div>
+        <div class="eco-badge">
+          <div class="eco-num" id="eco-water">0L</div>
+          <div class="eco-label">물 절약</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📊 영양 리포트</div>
+      <div id="order-nutrition-report"></div>
+    </div>
+
+    <button class="btn btn-mint btn-full" onclick="navigate('home')" style="margin-top:8px;">🏠 홈으로</button>
+  </div>
+
+  <!-- ==================== RETURN CONFIRM ==================== -->
+  <div class="screen" id="screen-return">
+    <div class="notif-mockup">
+      <div class="notif-icon">🔔</div>
+      <div>
+        <div style="font-size:14px;font-weight:bold;">레고밥</div>
+        <div style="font-size:12px;color:var(--gray);">용기 반납이 확인되었어요! 그린 포인트 적립 🌱</div>
+      </div>
+    </div>
+
+    <div class="tree-container">
+      <div class="tree" id="tree-emoji">🌱</div>
+      <div style="font-size:14px;color:var(--gray);margin:8px 0;">나의 나무가 자라고 있어요!</div>
+      <div class="points-badge" id="green-points-earned">+15 그린 포인트</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🌳 나무 레벨</div>
+      <div style="text-align:center;">
+        <div style="font-size:14px;" id="tree-level-text">Lv.1 새싹</div>
+        <div class="progress-bar" style="margin:8px 0;">
+          <div class="progress-fill" id="tree-progress" style="width:30%;background:var(--green);"></div>
+        </div>
+        <div style="font-size:12px;color:var(--gray);" id="tree-next-text">다음 레벨까지 20포인트</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">♻️ 누적 환경 기여</div>
+      <div class="eco-row">
+        <div class="eco-badge">
+          <div class="eco-num" id="eco-total-returns">0회</div>
+          <div class="eco-label">반납 횟수</div>
+        </div>
+        <div class="eco-badge">
+          <div class="eco-num" id="eco-total-points">0P</div>
+          <div class="eco-label">총 그린포인트</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-mint btn-full" onclick="navigate('home')">🏠 홈으로</button>
+  </div>
+
+  <!-- ==================== MY PAGE ==================== -->
+  <div class="screen" id="screen-mypage">
+    <div class="profile-header">
+      <div class="profile-avatar">🧑‍🎓</div>
+      <div style="font-size:18px;" id="user-name">DGIST 학생</div>
+      <div style="font-size:12px;color:var(--gray);">레고밥 회원</div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-num" id="my-orders">0</div>
+        <div class="stat-label">총 주문</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" id="my-green-pts">0</div>
+        <div class="stat-label">그린 포인트</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" id="my-returns">0</div>
+        <div class="stat-label">반납 횟수</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📊 주간 기록</div>
+      <div class="week-chart" id="my-week-chart"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🌳 그린 포인트 진행</div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="font-size:40px;" id="my-tree">🌱</div>
+        <div style="flex:1;">
+          <div style="font-size:14px;" id="my-tree-level">Lv.1 새싹</div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="my-tree-progress" style="width:0%;background:var(--green);"></div>
+          </div>
+          <div style="font-size:11px;color:var(--gray);" id="my-tree-pts">0 / 50 포인트</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">⚙️ 식이 설정</div>
+      <div class="toggle-row">
+        <span>🥩 고단백 모드</span>
+        <div class="toggle-switch" data-pref="highProtein" onclick="togglePref(this)"></div>
+      </div>
+      <div class="toggle-row">
+        <span>🥬 채식 우선</span>
+        <div class="toggle-switch" data-pref="vegFirst" onclick="togglePref(this)"></div>
+      </div>
+      <div class="toggle-row">
+        <span>🔥 저칼로리 모드</span>
+        <div class="toggle-switch" data-pref="lowCal" onclick="togglePref(this)"></div>
+      </div>
+      <div class="toggle-row">
+        <span>🚫 알레르기 필터</span>
+        <div class="toggle-switch" data-pref="allergyFilter" onclick="togglePref(this)"></div>
+      </div>
+      <div class="toggle-row" style="border:none;">
+        <span>🔔 픽업 알림</span>
+        <div class="toggle-switch on" data-pref="pickupNotif" onclick="togglePref(this)"></div>
+      </div>
+    </div>
+
+    <button class="btn btn-purple btn-full btn-sm" onclick="confirmReturn()" style="margin-top:4px;">♻️ 용기 반납 확인</button>
+  </div>
+
+  <!-- Bottom Nav -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" data-screen="home" onclick="navigate('home')">
+      <span class="nav-icon">🏠</span>홈
+    </button>
+    <button class="nav-item" data-screen="simulator" onclick="navigate('simulator')">
+      <span class="nav-icon">🧱</span>조합
+    </button>
+    <button class="nav-item" data-screen="rush" onclick="navigate('rush')">
+      <span class="nav-icon">🎮</span>러시
+    </button>
+    <button class="nav-item" data-screen="group" onclick="navigate('group')">
+      <span class="nav-icon">👥</span>같이밥
+    </button>
+    <button class="nav-item" data-screen="mypage" onclick="navigate('mypage')">
+      <span class="nav-icon">👤</span>MY
+    </button>
+  </nav>
+</div>
+
+<!-- ORDER MODAL -->
+<div class="modal-overlay" id="order-modal">
+  <div class="modal">
+    <div style="font-size:48px;">🧱</div>
+    <div style="font-size:18px;margin:10px 0;">주문을 확인해주세요</div>
+    <div id="modal-order-summary" style="font-size:13px;color:var(--gray);margin-bottom:16px;"></div>
+    <div style="display:flex;gap:8px;justify-content:center;">
+      <button class="btn btn-coral" onclick="confirmOrder()">주문 확정</button>
+      <button class="btn" style="background:var(--light-gray);color:var(--dark);" onclick="closeModal()">취소</button>
+    </div>
+  </div>
+</div>
+
+<!-- SPIN RESULT MODAL -->
+<div class="modal-overlay" id="spin-modal">
+  <div class="modal">
+    <div style="font-size:48px;" id="spin-modal-emoji">🎉</div>
+    <div style="font-size:20px;margin:10px 0;" id="spin-modal-title"></div>
+    <div style="font-size:14px;color:var(--gray);margin-bottom:16px;" id="spin-modal-desc"></div>
+    <button class="btn btn-coral" onclick="closeSpinModal()">확인</button>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+const BLOCKS = [
+  { id:'bulgogi', name:'불고기', cat:'protein', cal:180, protein:22, carb:8, fat:7, price:2500, img:'images/bulgogi.png', emoji:'🥩' },
+  { id:'tofu', name:'두부구이', cat:'protein', cal:120, protein:14, carb:4, fat:6, price:1800, img:'images/tofu.png', emoji:'🧈' },
+  { id:'chicken', name:'닭가슴살', cat:'protein', cal:150, protein:28, carb:2, fat:3, price:2200, img:'images/bulgogi.png', emoji:'🍗' },
+  { id:'egg', name:'계란말이', cat:'protein', cal:140, protein:12, carb:3, fat:9, price:1500, img:'images/tofu.png', emoji:'🥚' },
+  { id:'spinach', name:'시금치나물', cat:'veggie', cal:45, protein:3, carb:5, fat:1, price:1200, img:'images/spinach.png', emoji:'🥬' },
+  { id:'broccoli', name:'브로콜리', cat:'veggie', cal:35, protein:3, carb:6, fat:0, price:1300, img:'images/spinach.png', emoji:'🥦' },
+  { id:'kimchi', name:'김치', cat:'veggie', cal:30, protein:2, carb:4, fat:0, price:800, img:'images/spinach.png', emoji:'🌶️' },
+  { id:'salad', name:'샐러드', cat:'veggie', cal:25, protein:1, carb:4, fat:0, price:1000, img:'images/spinach.png', emoji:'🥗' },
+  { id:'potato', name:'감자조림', cat:'carb', cal:130, protein:2, carb:28, fat:2, price:1200, img:'images/potato.png', emoji:'🥔' },
+  { id:'sweetpotato', name:'고구마', cat:'carb', cal:140, protein:2, carb:32, fat:0, price:1300, img:'images/potato.png', emoji:'🍠' },
+  { id:'corn', name:'옥수수', cat:'carb', cal:110, protein:3, carb:22, fat:1, price:1100, img:'images/potato.png', emoji:'🌽' },
+  { id:'fruit', name:'과일컵', cat:'dessert', cal:80, protein:1, carb:18, fat:0, price:1500, img:'images/fruit.png', emoji:'🍓' },
+  { id:'yogurt', name:'요거트', cat:'dessert', cal:90, protein:4, carb:14, fat:2, price:1200, img:'images/fruit.png', emoji:'🍦' },
+  { id:'mochi', name:'찹쌀떡', cat:'dessert', cal:120, protein:2, carb:26, fat:1, price:1000, img:'images/fruit.png', emoji:'🍡' },
+  { id:'curry', name:'카레소스', cat:'carb', cal:100, protein:3, carb:15, fat:4, price:1400, img:'images/curry.png', emoji:'🍛' },
+];
+
+const BASES = {
+  rice: { name:'흰쌀밥', cal:300, carb:65, protein:5, fat:0, price:1000 },
+  brown: { name:'현미밥', cal:280, carb:58, protein:6, fat:1, price:1200 },
+  noodle: { name:'곤약면', cal:30, carb:5, protein:1, fat:0, price:1500 },
+};
+
+const ROULETTE_SEGMENTS = [
+  { label:'10% 할인', discount:10, color:'var(--coral)' },
+  { label:'꽝!', discount:0, color:'var(--gray)' },
+  { label:'20% 할인', discount:20, color:'var(--mint)' },
+  { label:'블록 +1', discount:0, special:'extra', color:'var(--yellow)' },
+  { label:'30% 할인', discount:30, color:'var(--lavender)' },
+  { label:'5% 할인', discount:5, color:'var(--sky)' },
+  { label:'50% 할인!!', discount:50, color:'var(--red)' },
+  { label:'꽝!', discount:0, color:'var(--gray)' },
+];
+
+const GROUP_NAMES = ['점심팟🍱','다이어트팟💪','많이먹자팟🔥','채식팟🥬','랜덤팟🎲'];
+const MEMBER_EMOJIS = ['😊','😎','🤓','🥳','😋','🤗','😆','🧑‍💻','👩‍🎓','👨‍🎓'];
+
+// ============================================================
+// STATE
+// ============================================================
+let state = JSON.parse(localStorage.getItem('legobab-state') || 'null') || {
+  selectedBase: 'rice',
+  selectedBlocks: [],
+  orders: [],
+  greenPoints: 0,
+  returns: 0,
+  prefs: { highProtein:false, vegFirst:false, lowCal:false, allergyFilter:false, pickupNotif:true },
+  weekScores: [0,0,0,0,0,0,0],
+  rushDiscount: 0,
+  groups: [],
+  treeLevel: 1,
+};
+function saveState() { localStorage.setItem('legobab-state', JSON.stringify(state)); }
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function navigate(screen) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById('screen-' + screen);
+  if (el) el.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => {
+    n.classList.toggle('active', n.dataset.screen === screen);
+  });
+  // scroll to top
+  el && el.scrollIntoView({behavior:'instant', block:'start'});
+  if (screen === 'simulator') renderSimulator();
+  if (screen === 'rush') initRush();
+  if (screen === 'group') renderGroups();
+  if (screen === 'mypage') renderMyPage();
+  if (screen === 'home') renderHome();
+  if (screen === 'menu') renderMenu();
+}
+
+// ============================================================
+// HOME
+// ============================================================
+function renderHome() {
+  // Week chart
+  const chart = document.getElementById('week-chart');
+  const days = ['월','화','수','목','금','토','일'];
+  const colors = [
+    'var(--coral)','var(--pink)','var(--mint)','var(--lavender)',
+    'var(--yellow)','var(--sky)','var(--light-gray)'
+  ];
+  chart.innerHTML = days.map((d,i) => {
+    const h = Math.max(10, (state.weekScores[i]||0));
+    return `<div class="week-bar-wrap">
+      <div class="week-bar" style="height:${h}%;background:${colors[i]}"></div>
+      <div class="week-label">${d}</div>
+    </div>`;
+  }).join('');
+
+  // Quick reorder
+  const qr = document.getElementById('quick-reorder');
+  if (state.orders.length > 0) {
+    const last = state.orders[state.orders.length - 1];
+    qr.innerHTML = `<div style="display:flex;align-items:center;gap:10px;">
+      <div style="font-size:24px;">🔄</div>
+      <div style="flex:1;">
+        <div style="font-size:14px;">${last.items.join(' + ')}</div>
+        <div style="font-size:12px;color:var(--gray);">${last.cal}kcal · ${last.price}원</div>
+      </div>
+      <button class="btn btn-coral btn-sm" onclick="navigate('simulator')">재주문</button>
+    </div>`;
+  }
+}
+
+// ============================================================
+// SIMULATOR
+// ============================================================
+let currentFilter = 'all';
+
+function renderSimulator() {
+  renderBlockList();
+  updateNutrition();
+}
+
+function selectBase(el, base) {
+  state.selectedBase = base;
+  el.parentElement.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  updateNutrition();
+  saveState();
+}
+
+function filterBlocks(cat, el) {
+  currentFilter = cat;
+  document.querySelectorAll('#block-category-filters .cat-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderBlockList();
+}
+
+function renderBlockList() {
+  const list = document.getElementById('block-list');
+  const filtered = currentFilter === 'all' ? BLOCKS : BLOCKS.filter(b => b.cat === currentFilter);
+  list.innerHTML = filtered.map(b => {
+    const sel = state.selectedBlocks.includes(b.id);
+    const catColors = { protein:'var(--red)', veggie:'var(--green)', carb:'var(--yellow)', dessert:'var(--purple)' };
+    return `<div class="block-item ${sel?'selected':''}" onclick="toggleBlock('${b.id}')" 
+      style="border-left:4px solid ${catColors[b.cat]}">
+      <img class="block-img" src="${b.img}" onerror="this.outerHTML='<div style=\\'width:56px;height:56px;border-radius:10px;background:var(--light-gray);display:flex;align-items:center;justify-content:center;font-size:24px\\'>${b.emoji}</div>'">
+      <div class="block-info">
+        <div class="block-name">${b.emoji} ${b.name}</div>
+        <div class="block-cal">${b.cal}kcal · ${b.price.toLocaleString()}원</div>
+      </div>
+      <div class="block-check">${sel?'✓':''}</div>
+    </div>`;
+  }).join('');
+}
+
+function toggleBlock(id) {
+  const idx = state.selectedBlocks.indexOf(id);
+  if (idx >= 0) {
+    state.selectedBlocks.splice(idx, 1);
+  } else if (state.selectedBlocks.length < 4) {
+    state.selectedBlocks.push(id);
+  }
+  saveState();
+  renderBlockList();
+  updateNutrition();
+}
+
+function updateNutrition() {
+  const base = BASES[state.selectedBase];
+  let totals = { cal: base.cal, protein: base.protein, carb: base.carb, fat: base.fat, price: base.price };
+  
+  state.selectedBlocks.forEach(id => {
+    const b = BLOCKS.find(x => x.id === id);
+    if (b) {
+      totals.cal += b.cal; totals.protein += b.protein;
+      totals.carb += b.carb; totals.fat += b.fat; totals.price += b.price;
+    }
+  });
+
+  const bars = document.getElementById('nutrition-bars');
+  const maxCal = 800, maxP = 50, maxC = 100, maxF = 30;
+  bars.innerHTML = `
+    <div style="margin:6px 0;">
+      <div style="display:flex;justify-content:space-between;font-size:12px;">
+        <span>🔥 칼로리</span><span>${totals.cal}kcal</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100,totals.cal/maxCal*100)}%;background:var(--coral);"></div></div>
+    </div>
+    <div style="margin:6px 0;">
+      <div style="display:flex;justify-content:space-between;font-size:12px;">
+        <span>🔴 단백질</span><span>${totals.protein}g</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100,totals.protein/maxP*100)}%;background:var(--red);"></div></div>
+    </div>
+    <div style="margin:6px 0;">
+      <div style="display:flex;justify-content:space-between;font-size:12px;">
+        <span>🟡 탄수화물</span><span>${totals.carb}g</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100,totals.carb/maxC*100)}%;background:var(--yellow);"></div></div>
+    </div>
+    <div style="margin:6px 0;">
+      <div style="display:flex;justify-content:space-between;font-size:12px;">
+        <span>🟤 지방</span><span>${totals.fat}g</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100,totals.fat/maxF*100)}%;background:var(--pink);"></div></div>
+    </div>
+  `;
+
+  // Balance score
+  const pRatio = totals.protein / Math.max(1, totals.protein + totals.carb + totals.fat);
+  const cRatio = totals.carb / Math.max(1, totals.protein + totals.carb + totals.fat);
+  const fRatio = totals.fat / Math.max(1, totals.protein + totals.carb + totals.fat);
+  // Ideal: 30% protein, 50% carb, 20% fat
+  const score = Math.max(0, Math.round(100 - (Math.abs(pRatio-0.3)*100 + Math.abs(cRatio-0.5)*100 + Math.abs(fRatio-0.2)*100)));
+  document.getElementById('balance-score').textContent = score + '점';
+  document.getElementById('total-price').textContent = totals.price.toLocaleString();
+}
+
+function placeOrder() {
+  if (state.selectedBlocks.length === 0) {
+    alert('블록을 1개 이상 선택해주세요!');
+    return;
+  }
+  const base = BASES[state.selectedBase];
+  let totals = { cal: base.cal, price: base.price };
+  const items = [base.name];
+  state.selectedBlocks.forEach(id => {
+    const b = BLOCKS.find(x => x.id === id);
+    if (b) { totals.cal += b.cal; totals.price += b.price; items.push(b.name); }
+  });
+  
+  document.getElementById('modal-order-summary').innerHTML = `
+    <div>${items.join(' + ')}</div>
+    <div style="margin-top:6px;font-size:15px;color:var(--coral);">${totals.cal}kcal · ${totals.price.toLocaleString()}원</div>
+  `;
+  document.getElementById('order-modal').classList.add('show');
+}
+
+function closeModal() { document.getElementById('order-modal').classList.remove('show'); }
+
+function confirmOrder() {
+  closeModal();
+  const base = BASES[state.selectedBase];
+  let totals = { cal: base.cal, protein: base.protein, carb: base.carb, fat: base.fat, price: base.price };
+  const items = [base.name];
+  state.selectedBlocks.forEach(id => {
+    const b = BLOCKS.find(x => x.id === id);
+    if (b) { totals.cal += b.cal; totals.protein += b.protein; totals.carb += b.carb; totals.fat += b.fat; totals.price += b.price; items.push(b.name); }
+  });
+
+  const orderNum = 'LB-' + String(Math.floor(Math.random()*9000)+1000);
+  state.orders.push({ items, ...totals, num: orderNum, date: new Date().toISOString() });
+  
+  // Update week score
+  const dow = new Date().getDay();
+  const dayIdx = dow === 0 ? 6 : dow - 1;
+  const pRatio = totals.protein / Math.max(1, totals.protein + totals.carb + totals.fat);
+  const cRatio = totals.carb / Math.max(1, totals.protein + totals.carb + totals.fat);
+  const fRatio = totals.fat / Math.max(1, totals.protein + totals.carb + totals.fat);
+  state.weekScores[dayIdx] = Math.max(0, Math.round(100 - (Math.abs(pRatio-0.3)*100 + Math.abs(cRatio-0.5)*100 + Math.abs(fRatio-0.2)*100)));
+  
+  state.selectedBlocks = [];
+  saveState();
+
+  // Show complete screen
+  document.getElementById('order-number').textContent = orderNum;
+  document.getElementById('eco-plastic').textContent = (state.orders.length * 35) + 'g';
+  document.getElementById('eco-co2').textContent = (state.orders.length * 120) + 'g';
+  document.getElementById('eco-water').textContent = (state.orders.length * 0.8).toFixed(1) + 'L';
+
+  const report = document.getElementById('order-nutrition-report');
+  report.innerHTML = `
+    <div style="display:flex;gap:12px;text-align:center;">
+      <div style="flex:1;"><div style="font-size:20px;color:var(--coral);">${totals.cal}</div><div style="font-size:11px;color:var(--gray);">kcal</div></div>
+      <div style="flex:1;"><div style="font-size:20px;color:var(--red);">${totals.protein}g</div><div style="font-size:11px;color:var(--gray);">단백질</div></div>
+      <div style="flex:1;"><div style="font-size:20px;color:var(--yellow);">${totals.carb}g</div><div style="font-size:11px;color:var(--gray);">탄수화물</div></div>
+      <div style="flex:1;"><div style="font-size:20px;color:var(--pink);">${totals.fat}g</div><div style="font-size:11px;color:var(--gray);">지방</div></div>
+    </div>
+  `;
+
+  navigate('complete');
+  // Remove 'complete' from nav active
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+}
+
+// ============================================================
+// MENU
+// ============================================================
+function renderMenu(cat) {
+  const list = document.getElementById('menu-list');
+  const filtered = (!cat || cat === 'all') ? BLOCKS : BLOCKS.filter(b => b.cat === cat);
+  const catLabels = { protein:'🔴 단백질', veggie:'🟢 채소', carb:'🟡 탄수', dessert:'🟣 디저트' };
+  const catColors = { protein:'var(--red)', veggie:'var(--green)', carb:'var(--yellow)', dessert:'var(--purple)' };
+  list.innerHTML = filtered.map(b => `
+    <div class="card" style="display:flex;gap:12px;align-items:center;border-left:4px solid ${catColors[b.cat]};">
+      <img src="${b.img}" style="width:64px;height:64px;border-radius:10px;object-fit:cover;"
+        onerror="this.outerHTML='<div style=\\'width:64px;height:64px;border-radius:10px;background:var(--light-gray);display:flex;align-items:center;justify-content:center;font-size:28px\\'>${b.emoji}</div>'">
+      <div style="flex:1;">
+        <div style="font-size:15px;">${b.emoji} ${b.name}</div>
+        <div style="font-size:12px;color:var(--gray);">${b.cal}kcal · P${b.protein}g C${b.carb}g F${b.fat}g</div>
+        <span class="tag tag-${b.cat==='protein'?'red':b.cat==='veggie'?'green':b.cat==='carb'?'yellow':'purple'}">${catLabels[b.cat]}</span>
+      </div>
+      <div style="font-size:14px;color:var(--coral);">${b.price.toLocaleString()}원</div>
+    </div>
+  `).join('');
+}
+
+function filterMenu(cat, el) {
+  document.querySelectorAll('#menu-cat-filters .cat-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderMenu(cat);
+}
+
+// ============================================================
+// RUSH
+// ============================================================
+let rushTimer = null;
+let rushTimeLeft = 300;
+
+function initRush() {
+  if (!rushTimer) {
+    rushTimeLeft = 300;
+    startRushTimer();
+  }
+  renderRushBlocks();
+  drawRoulette();
+}
+
+function startRushTimer() {
+  clearInterval(rushTimer);
+  rushTimer = setInterval(() => {
+    rushTimeLeft--;
+    if (rushTimeLeft <= 0) { rushTimeLeft = 300; }
+    const m = String(Math.floor(rushTimeLeft/60)).padStart(2,'0');
+    const s = String(rushTimeLeft%60).padStart(2,'0');
+    const el = document.getElementById('rush-countdown');
+    if (el) el.textContent = m + ':' + s;
+  }, 1000);
+}
+
+function drawRoulette() {
+  const wheel = document.getElementById('roulette-wheel');
+  const segCount = ROULETTE_SEGMENTS.length;
+  const segAngle = 360 / segCount;
+  // Draw using conic gradient
+  let gradientParts = [];
+  ROULETTE_SEGMENTS.forEach((seg, i) => {
+    const start = i * (100/segCount);
+    const end = (i+1) * (100/segCount);
+    gradientParts.push(`${seg.color} ${start}% ${end}%`);
+  });
+  wheel.style.background = `conic-gradient(${gradientParts.join(',')})`;
+  
+  // Labels
+  wheel.querySelectorAll('.seg-label').forEach(l => l.remove());
+  ROULETTE_SEGMENTS.forEach((seg, i) => {
+    const label = document.createElement('div');
+    label.className = 'seg-label';
+    const angle = i * segAngle + segAngle/2 - 90;
+    const rad = angle * Math.PI / 180;
+    const r = 75;
+    const x = 120 + r * Math.cos(rad) - 25;
+    const y = 120 + r * Math.sin(rad) - 8;
+    label.style.cssText = `position:absolute;left:${x}px;top:${y}px;font-size:10px;color:#fff;width:50px;text-align:center;transform:rotate(${angle+90}deg);text-shadow:1px 1px 2px rgba(0,0,0,0.5);pointer-events:none;z-index:2;`;
+    label.textContent = seg.label;
+    wheel.appendChild(label);
+  });
+}
+
+let spinning = false;
+function spinRoulette() {
+  if (spinning) return;
+  spinning = true;
+  document.getElementById('spin-btn').disabled = true;
+  document.getElementById('spin-result').textContent = '돌리는 중...';
+
+  const wheel = document.getElementById('roulette-wheel');
+  const segCount = ROULETTE_SEGMENTS.length;
+  const segAngle = 360 / segCount;
+  const winIndex = Math.floor(Math.random() * segCount);
+  // Spin: multiple rotations + land on winning segment
+  const targetAngle = 360 * 5 + (360 - winIndex * segAngle - segAngle/2);
+  wheel.style.transition = 'none';
+  wheel.style.transform = 'rotate(0deg)';
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      wheel.style.transition = 'transform 3s cubic-bezier(0.17, 0.67, 0.12, 0.99)';
+      wheel.style.transform = `rotate(${targetAngle}deg)`;
+    });
+  });
+
+  setTimeout(() => {
+    const seg = ROULETTE_SEGMENTS[winIndex];
+    spinning = false;
+    document.getElementById('spin-btn').disabled = false;
+    
+    if (seg.discount > 0) {
+      state.rushDiscount = seg.discount;
+      saveState();
+      document.getElementById('spin-modal-emoji').textContent = '🎉';
+      document.getElementById('spin-modal-title').textContent = seg.label + ' 당첨!';
+      document.getElementById('spin-modal-desc').textContent = '다음 주문에 적용됩니다!';
+    } else if (seg.special === 'extra') {
+      document.getElementById('spin-modal-emoji').textContent = '🧱';
+      document.getElementById('spin-modal-title').textContent = '블록 +1 당첨!';
+      document.getElementById('spin-modal-desc').textContent = '다음 주문 시 블록 5개까지 선택 가능!';
+    } else {
+      document.getElementById('spin-modal-emoji').textContent = '😅';
+      document.getElementById('spin-modal-title').textContent = '아쉽! 꽝!';
+      document.getElementById('spin-modal-desc').textContent = '다음 기회에 도전해보세요!';
+    }
+    document.getElementById('spin-modal').classList.add('show');
+    document.getElementById('spin-result').textContent = '';
+  }, 3200);
+}
+
+function closeSpinModal() { document.getElementById('spin-modal').classList.remove('show'); }
+
+function renderRushBlocks() {
+  const container = document.getElementById('rush-blocks');
+  const rushItems = BLOCKS.slice(0,6).map(b => {
+    const disc = Math.floor(Math.random()*3+1)*10;
+    const remaining = Math.floor(Math.random()*8+1);
+    return { ...b, disc, remaining };
+  });
+  container.innerHTML = rushItems.map(b => `
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--light-gray);">
+      <div style="font-size:24px;">${b.emoji}</div>
+      <div style="flex:1;">
+        <div style="font-size:14px;">${b.name}</div>
+        <div style="font-size:11px;color:var(--gray);">남은 ${b.remaining}개</div>
+      </div>
+      <span class="discount-badge">${b.disc}% OFF</span>
+    </div>
+  `).join('');
+}
+
+// ============================================================
+// GROUP ORDER
+// ============================================================
+function renderGroups() {
+  const list = document.getElementById('group-list');
+  if (state.groups.length === 0) {
+    // Generate some sample groups
+    for (let i = 0; i < 3; i++) {
+      const memberCount = Math.floor(Math.random()*5)+2;
+      const members = [];
+      for (let j = 0; j < memberCount; j++) {
+        members.push(MEMBER_EMOJIS[Math.floor(Math.random()*MEMBER_EMOJIS.length)]);
+      }
+      state.groups.push({
+        name: GROUP_NAMES[i],
+        members,
+        target: Math.floor(Math.random()*5)+5,
+        timeLeft: Math.floor(Math.random()*20)+5,
+      });
+    }
+    saveState();
+  }
+
+  list.innerHTML = state.groups.map((g,i) => {
+    const tier = g.members.length >= 10 ? '25%' : g.members.length >= 8 ? '20%' : g.members.length >= 5 ? '15%' : g.members.length >= 3 ? '10%' : '0%';
+    return `<div class="group-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div style="font-size:15px;">${g.name}</div>
+        <span class="discount-badge">${tier} 할인</span>
+      </div>
+      <div class="group-members">
+        ${g.members.map(m => `<div class="group-avatar" style="background:${['var(--pink)','var(--mint)','var(--sky)','var(--lavender)','var(--yellow)'][Math.floor(Math.random()*5)]}">${m}</div>`).join('')}
+        <div class="group-avatar" style="background:var(--light-gray);">+</div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--gray);">
+        <span>${g.members.length}/${g.target}명</span>
+        <span>⏰ ${g.timeLeft}분 남음</span>
+      </div>
+      <button class="btn btn-mint btn-sm btn-full" style="margin-top:8px;" onclick="joinGroup(${i})">참여하기</button>
+    </div>`;
+  }).join('');
+}
+
+function createGroup() {
+  const name = prompt('그룹 이름을 입력하세요:', '점심팟🍱');
+  if (name) {
+    state.groups.unshift({
+      name,
+      members: ['😊'],
+      target: 5,
+      timeLeft: 30,
+    });
+    saveState();
+    renderGroups();
+  }
+}
+
+function joinGroup(idx) {
+  const emoji = MEMBER_EMOJIS[Math.floor(Math.random()*MEMBER_EMOJIS.length)];
+  state.groups[idx].members.push(emoji);
+  saveState();
+  renderGroups();
+}
+
+// ============================================================
+// RETURN CONFIRM
+// ============================================================
+function confirmReturn() {
+  state.returns++;
+  const pts = 15;
+  state.greenPoints += pts;
+  
+  // Tree level
+  if (state.greenPoints >= 200) { state.treeLevel = 5; }
+  else if (state.greenPoints >= 100) { state.treeLevel = 4; }
+  else if (state.greenPoints >= 50) { state.treeLevel = 3; }
+  else if (state.greenPoints >= 20) { state.treeLevel = 2; }
+  else { state.treeLevel = 1; }
+  
+  saveState();
+
+  const trees = ['🌱','🌿','🪴','🌳','🌲'];
+  const levels = ['Lv.1 새싹','Lv.2 풀잎','Lv.3 묘목','Lv.4 나무','Lv.5 숲'];
+  const thresholds = [20,50,100,200,999];
+  
+  document.getElementById('tree-emoji').textContent = trees[state.treeLevel-1];
+  document.getElementById('green-points-earned').textContent = `+${pts} 그린 포인트`;
+  document.getElementById('tree-level-text').textContent = levels[state.treeLevel-1];
+  
+  const nextThreshold = thresholds[state.treeLevel-1];
+  const prevThreshold = state.treeLevel > 1 ? thresholds[state.treeLevel-2] : 0;
+  const progress = Math.min(100, ((state.greenPoints - prevThreshold) / (nextThreshold - prevThreshold)) * 100);
+  document.getElementById('tree-progress').style.width = progress + '%';
+  document.getElementById('tree-next-text').textContent = `다음 레벨까지 ${Math.max(0, nextThreshold - state.greenPoints)}포인트`;
+  
+  document.getElementById('eco-total-returns').textContent = state.returns + '회';
+  document.getElementById('eco-total-points').textContent = state.greenPoints + 'P';
+
+  navigate('return');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+}
+
+// ============================================================
+// MY PAGE
+// ============================================================
+function renderMyPage() {
+  document.getElementById('my-orders').textContent = state.orders.length;
+  document.getElementById('my-green-pts').textContent = state.greenPoints;
+  document.getElementById('my-returns').textContent = state.returns;
+
+  const trees = ['🌱','🌿','🪴','🌳','🌲'];
+  const levels = ['Lv.1 새싹','Lv.2 풀잎','Lv.3 묘목','Lv.4 나무','Lv.5 숲'];
+  const thresholds = [20,50,100,200,999];
+  
+  document.getElementById('my-tree').textContent = trees[state.treeLevel-1];
+  document.getElementById('my-tree-level').textContent = levels[state.treeLevel-1];
+  
+  const nextThreshold = thresholds[state.treeLevel-1];
+  const prevThreshold = state.treeLevel > 1 ? thresholds[state.treeLevel-2] : 0;
+  const progress = Math.min(100, ((state.greenPoints - prevThreshold) / (nextThreshold - prevThreshold)) * 100);
+  document.getElementById('my-tree-progress').style.width = progress + '%';
+  document.getElementById('my-tree-pts').textContent = `${state.greenPoints} / ${nextThreshold} 포인트`;
+
+  // Prefs
+  document.querySelectorAll('.toggle-switch').forEach(el => {
+    const pref = el.dataset.pref;
+    if (state.prefs[pref]) el.classList.add('on');
+    else el.classList.remove('on');
+  });
+
+  // Week chart
+  const chart = document.getElementById('my-week-chart');
+  const days = ['월','화','수','목','금','토','일'];
+  const colors = ['var(--coral)','var(--pink)','var(--mint)','var(--lavender)','var(--yellow)','var(--sky)','var(--light-gray)'];
+  chart.innerHTML = days.map((d,i) => {
+    const h = Math.max(10, (state.weekScores[i]||0));
+    return `<div class="week-bar-wrap">
+      <div class="week-bar" style="height:${h}%;background:${colors[i]}"></div>
+      <div class="week-label">${d}</div>
+    </div>`;
+  }).join('');
+}
+
+function togglePref(el) {
+  const pref = el.dataset.pref;
+  state.prefs[pref] = !state.prefs[pref];
+  el.classList.toggle('on');
+  saveState();
+}
+
+// ============================================================
+// INIT
+// ============================================================
+renderHome();
+renderMenu();
+</script>
+
+</body>
+</html>
